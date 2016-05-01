@@ -11,6 +11,8 @@
 SimulationFacade::SimulationFacade()
     : m_universe(Cluster::getNewInstance())
 {
+    m_universe->setName("Universe");
+
     std::unique_ptr<Config> config;
     try
     {
@@ -65,33 +67,33 @@ SimulationFacade *SimulationFacade::getInstance()
     return singletonInstance;
 }
 
-BodyIterator SimulationFacade::bodyBegin() const
+BodyIterator SimulationFacade::begin() const
 {
     return BodyIterator(m_universe.get());
 }
 
-BodyIterator SimulationFacade::bodyEnd() const
+BodyIterator SimulationFacade::end() const
 {
     return BodyIterator(nullptr);
 }
 
 void SimulationFacade::updateSimulation(double timestep)
 {
-    for (auto it = bodyBegin(); it != bodyEnd(); ++it)
+    for (Body& b1 : *this)
     {
         // Initial zero force vector for body it
         double xForce = 0.0,
                yForce = 0.0;
 
-        for (auto it2 = bodyBegin(); it2 != bodyEnd(); ++it2)
+        for (Body& b2 : *this)
         {
-            if (it == it2)
+            if (&b1 == &b2)
                 continue;
 
             // Add attraction between it and every other body
-            it->addAttraction(*it2, xForce, yForce);
+            b1.addAttraction(b2, xForce, yForce);
         }
         // Update it with the new force vector for the current timestep
-        it->update(xForce, yForce, timestep);
+        b1.update(xForce, yForce, timestep);
     }
 }

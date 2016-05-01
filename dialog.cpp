@@ -77,28 +77,31 @@ void Dialog::paintEvent(QPaintEvent*)
   QPen textPen(Qt::white);
   textPen.setWidth(1);
 
+  for (Body& b : *m_sim)
+      DEBUG(b.getName());
+
   // paint all bodies
-  for (auto it = m_sim->bodyBegin(); it != m_sim->bodyEnd(); ++it)
+  for (Body& b : *m_sim)
   {
     // Create a QColour and brush from the hexadecimal colour code
-    QColor colour(it->getColour().c_str());
+    QColor colour(b.getColour().c_str());
     QBrush brush(colour);
     painter.setBrush(brush);
     painter.setPen(bodyPen);
 
     // use a QPointF and radius so the body is centered correctly
-    painter.drawEllipse(QPointF(X_CENTER - it->getXPosition() * SCALE,
-                                Y_CENTER - it->getYPosition() * SCALE),
-                        it->getRadius(), it->getRadius());
+    painter.drawEllipse(QPointF(X_CENTER - b.getXPosition() * SCALE,
+                                Y_CENTER - b.getYPosition() * SCALE),
+                        b.getRadius(), b.getRadius());
 
     // paint the name of the body (extension for assign 1)
-    if (it->getRenderName())
+    if (b.getRenderName())
     {
       painter.setPen(textPen);
       painter.drawText(
-         QPointF(X_CENTER - it->getXPosition() * SCALE + TXT_X_OFFSET,
-            Y_CENTER - it->getYPosition() * SCALE + it->getRadius() + TXT_Y_OFFSET),
-         it->getName().c_str());
+         QPointF(X_CENTER - b.getXPosition() * SCALE + TXT_X_OFFSET,
+            Y_CENTER - b.getYPosition() * SCALE + b.getRadius() + TXT_Y_OFFSET),
+         b.getName().c_str());
     }
   }
 }

@@ -14,8 +14,8 @@ public:
     static SimulationFacade* getInstance();
 //    ZodiacIterator zodiacBegin() const;
 //    ZodiacIterator zodiacEnd() const;
-    BodyIterator bodyBegin() const;
-    BodyIterator bodyEnd() const;
+    BodyIterator begin() const;
+    BodyIterator end() const;
     void updateSimulation(double timestep);
 
 private:

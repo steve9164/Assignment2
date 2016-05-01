@@ -34,7 +34,6 @@ HEADERS  += dialog.h \
     config_keyvalue.h \
     config.h \
     config_section.h \
-    prototype.h \
     planetary_bodybuilder.h \
     bodybuilder.h \
     simulationfacade.h \
