@@ -8,6 +8,7 @@
 #include <QKeyEvent>
 
 #include "simulationfacade.h"
+#include "listobjects.h"
 
 namespace Ui {
   class Dialog;
@@ -32,10 +33,14 @@ protected:
   void paintEvent(QPaintEvent*);
   void keyPressEvent(QKeyEvent* event);
 
+private slots:
+  void on_btnListObjects_clicked();
+
 private:
   Ui::Dialog* ui;
+  ListObjects* m_listObjects;
 
-  SimulationFacade sim;
+  SimulationFacade* m_sim;
 
   // Whether or not the simulation is currently paused
   bool paused;

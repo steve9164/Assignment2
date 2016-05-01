@@ -13,7 +13,7 @@ class ClusterBuilder : public BodyBuilder
 {
 public:
     ClusterBuilder(std::map<std::string, std::unique_ptr<ObjectPrototype>>& freeObjects)
-        : m_freeObjects(freeObjects) { }
+        : m_freeObjects(freeObjects), m_newCluster(Cluster::getNewInstance()) { }
 
     virtual ~ClusterBuilder() { }
 

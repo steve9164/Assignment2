@@ -1,6 +1,7 @@
 #include "planetary_bodybuilder.h"
 #include "dialog.h"
 #include "ui_dialog.h"
+#include "listobjects.h"
 
 // time step for the simulation (default 10000)
 #define TIMESTEP (10000)
@@ -11,7 +12,9 @@
 
 Dialog::Dialog(QWidget *parent) :
   QDialog(parent),
-  ui(new Ui::Dialog)
+  ui(new Ui::Dialog),
+  m_listObjects(new ListObjects(this)),
+  m_sim(SimulationFacade::getInstance())
 {
   // SimulationFacade reads config and builds the universe
 
@@ -21,7 +24,7 @@ Dialog::Dialog(QWidget *parent) :
   this->resize(DIALOG_WIDTH, DIALOG_HEIGHT);
 
   // Use a black background because it's SPAAAAAAAAAAAAAAACE
-  this->setStyleSheet("background-color: #000000;");
+  //this->setStyleSheet("background-color: #000000;");
 
   // Simulation is initially not paused
   this->paused = false;
@@ -38,8 +41,7 @@ void Dialog::nextFrame()
       return;
   }
 
-  DEBUG("Updating simulation");
-  sim.updateSimulation(TIMESTEP);
+  m_sim->updateSimulation(TIMESTEP);
 
   update();
 }
@@ -76,7 +78,7 @@ void Dialog::paintEvent(QPaintEvent*)
   textPen.setWidth(1);
 
   // paint all bodies
-  for (auto it = sim.bodyBegin(); it != sim.bodyEnd(); ++it)
+  for (auto it = m_sim->bodyBegin(); it != m_sim->bodyEnd(); ++it)
   {
     // Create a QColour and brush from the hexadecimal colour code
     QColor colour(it->getColour().c_str());
@@ -99,7 +101,6 @@ void Dialog::paintEvent(QPaintEvent*)
          it->getName().c_str());
     }
   }
-  DEBUG("Finished painting");
 }
 
 void Dialog::keyPressEvent(QKeyEvent *event)
@@ -108,4 +109,9 @@ void Dialog::keyPressEvent(QKeyEvent *event)
   {
     Dialog::paused = !this->paused;
   }
+}
+
+void Dialog::on_btnListObjects_clicked()
+{
+    m_listObjects->show();
 }

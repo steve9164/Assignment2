@@ -6,6 +6,8 @@
 #include <memory>
 #include <vector>
 
+class ListObjects;
+
 class Cluster : public ObjectPrototype
 {
 public:
@@ -32,6 +34,8 @@ protected:
     BodyIterator::Info getIteratorInfo() { return {*this, 0}; }
 
 private:
+    friend class ListObjects; // Needs access to m_objects to show object hierarchy
+
     // Force cloning
     Cluster(std::string name, std::string clusterType)
         : m_name(name), m_clusterType(clusterType) { }

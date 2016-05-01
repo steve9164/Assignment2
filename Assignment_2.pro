@@ -25,7 +25,8 @@ SOURCES += main.cpp\
     bodyiterator.cpp \
     clusterbuilder.cpp \
     cluster.cpp \
-    bodybuilder.cpp
+    bodybuilder.cpp \
+    listobjects.cpp
 
 HEADERS  += dialog.h \
     body.h \
@@ -40,6 +41,8 @@ HEADERS  += dialog.h \
     objectprototype.h \
     bodyiterator.h \
     clusterbuilder.h \
-    cluster.h
+    cluster.h \
+    listobjects.h
 
-FORMS    += dialog.ui
+FORMS    += dialog.ui \
+    listobjects.ui
