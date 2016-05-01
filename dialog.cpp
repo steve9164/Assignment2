@@ -13,24 +13,7 @@ Dialog::Dialog(QWidget *parent) :
   QDialog(parent),
   ui(new Ui::Dialog)
 {
-  // Read config file config.ini from the working dir
-  try
-  {
-    m_config = new Config("config.ini");
-  }
-  catch (const std::invalid_argument&)
-  {
-    std::cerr << "No simulation config! Exiting..." << std::endl;
-    exit(1);
-  }
-
-  // Build the bodies
-  for (ConfigSection* cs : m_config->getSections())
-  {
-      PlanetaryBodyBuilder builder;
-      builder.buildBody(cs);
-      m_bodies.push_back(builder.getBody());
-  }
+  // SimulationFacade reads config and builds the universe
 
   // Create the dialog
   ui->setupUi(this);
@@ -55,25 +38,8 @@ void Dialog::nextFrame()
       return;
   }
 
-  // Update total forces for all bodies b1, b2 where b1 != b2
-  for (Body* b1 : m_bodies)
-  {
-      // Initial zero force vector for b1
-      double xForce = 0.0,
-             yForce = 0.0;
-
-      // Add attraction between b1 and every other body
-      for (Body* b2 : m_bodies)
-      {
-        if (b1 != b2)
-        {
-          b1->addAttraction(*b2, xForce, yForce);
-        }
-      }
-
-      // Update b1 with the new force vector for the current timestep
-      b1->update(xForce, yForce, TIMESTEP);
-  }
+  DEBUG("Updating simulation");
+  sim.updateSimulation(TIMESTEP);
 
   update();
 }
@@ -83,14 +49,6 @@ Dialog::~Dialog()
   DEBUG("Dialog destructor");
 
   delete ui;
-  delete m_config;
-
-  // Ensure every body destructor is called when the Dialog is closed
-  for (Body* b : m_bodies)
-  {
-    delete b;
-  }
-  m_bodies.clear();
 }
 
 // location of center
@@ -118,29 +76,30 @@ void Dialog::paintEvent(QPaintEvent*)
   textPen.setWidth(1);
 
   // paint all bodies
-  for (Body* b : m_bodies)
+  for (auto it = sim.bodyBegin(); it != sim.bodyEnd(); ++it)
   {
     // Create a QColour and brush from the hexadecimal colour code
-    QColor colour(b->getColour().c_str());
+    QColor colour(it->getColour().c_str());
     QBrush brush(colour);
     painter.setBrush(brush);
     painter.setPen(bodyPen);
 
     // use a QPointF and radius so the body is centered correctly
-    painter.drawEllipse(QPointF(X_CENTER - b->getXPosition() * SCALE,
-                                Y_CENTER - b->getYPosition() * SCALE),
-                        b->getRadius(), b->getRadius());
+    painter.drawEllipse(QPointF(X_CENTER - it->getXPosition() * SCALE,
+                                Y_CENTER - it->getYPosition() * SCALE),
+                        it->getRadius(), it->getRadius());
 
     // paint the name of the body (extension for assign 1)
-    if (b->getRenderName())
+    if (it->getRenderName())
     {
       painter.setPen(textPen);
       painter.drawText(
-         QPointF(X_CENTER - b->getXPosition() * SCALE + TXT_X_OFFSET,
-            Y_CENTER - b->getYPosition() * SCALE + b->getRadius() + TXT_Y_OFFSET),
-         b->getName().c_str());
+         QPointF(X_CENTER - it->getXPosition() * SCALE + TXT_X_OFFSET,
+            Y_CENTER - it->getYPosition() * SCALE + it->getRadius() + TXT_Y_OFFSET),
+         it->getName().c_str());
     }
   }
+  DEBUG("Finished painting");
 }
 
 void Dialog::keyPressEvent(QKeyEvent *event)

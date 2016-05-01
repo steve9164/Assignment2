@@ -21,9 +21,11 @@ SOURCES += main.cpp\
     config_keyvalue.cpp \
     planetary_bodybuilder.cpp \
     simulationfacade.cpp \
+    objectprototype.cpp \
     bodyiterator.cpp \
-    simulationcluster.cpp \
-    clusterbodybuilder.cpp
+    clusterbuilder.cpp \
+    cluster.cpp \
+    bodybuilder.cpp
 
 HEADERS  += dialog.h \
     body.h \
@@ -35,9 +37,9 @@ HEADERS  += dialog.h \
     planetary_bodybuilder.h \
     bodybuilder.h \
     simulationfacade.h \
+    objectprototype.h \
     bodyiterator.h \
-    simulationcluster.h \
-    simulationobject.h \
-    clusterbodybuilder.h
+    clusterbuilder.h \
+    cluster.h
 
 FORMS    += dialog.ui

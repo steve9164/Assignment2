@@ -12,7 +12,8 @@ class PlanetaryBodyBuilder : public BodyBuilder
 {
 
 public:
-  PlanetaryBodyBuilder();
+  PlanetaryBodyBuilder()
+      : m_newBody(Body::getNewInstance()) { }
 
   /*
    * Builds a new Planetary Body object from the values contained
@@ -23,7 +24,7 @@ public:
   /*
    * Returns a pointer to the built Body object.
    */
-  Body* getBody() const;
+  std::unique_ptr<Body> getBody();
 
   /*
    * DESTRUCTOR NOTE: newly created Body is **NOT** deleted here.
@@ -32,13 +33,8 @@ public:
   virtual ~PlanetaryBodyBuilder() { }
 
 private:
-  Body* m_newBody;
+  std::unique_ptr<Body> m_newBody;
   ConfigSection* m_configSection;
-
-  // Prints to stderr that keyName wasn't set properly, and
-  // the value that will be used instead (from the prototype).
-  // Error handling, yay!
-  void configError(std::string keyName, std::string def);
 
 };
 

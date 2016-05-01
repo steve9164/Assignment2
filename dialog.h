@@ -7,8 +7,7 @@
 #include <QTimer>
 #include <QKeyEvent>
 
-#include "body.h"
-#include "config.h"
+#include "simulationfacade.h"
 
 namespace Ui {
   class Dialog;
@@ -35,8 +34,8 @@ protected:
 
 private:
   Ui::Dialog* ui;
-  std::list<Body*> m_bodies;
-  Config* m_config;
+
+  SimulationFacade sim;
 
   // Whether or not the simulation is currently paused
   bool paused;

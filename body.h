@@ -3,7 +3,8 @@
 
 #include <string>
 
-#include "prototype.h"
+#include "objectprototype.h"
+#include "bodyiterator.h"
 
 // gravitational constant
 #define G (6.67428e-11)
@@ -11,7 +12,7 @@
 // astronomical unit
 #define AU (1.4960000e+11)
 
-class Body : public Prototype
+class Body : public ObjectPrototype
 {
 
 private:
@@ -39,7 +40,7 @@ private:
   bool m_renderName;
 
   // prototypical Body instance
-  static Body* typicalInstance;
+  static std::unique_ptr<Body> typicalInstance;
 
 public:
   Body(double mass,
@@ -63,9 +64,11 @@ public:
 
   virtual ~Body();
 
+  virtual bool isCluster() const { return false; }
+
   Body* clone();
 
-  static Body* getTypicalInstance();
+  static std::unique_ptr<Body> getNewInstance();
 
   // get body name
   std::string getName() const { return m_name; }
@@ -120,6 +123,9 @@ public:
   // this specifies whether the body's name will be rendered in the simulation
   bool getRenderName() const;
   void setRenderName(bool renderName);
+
+protected:
+  BodyIterator::Info getIteratorInfo() { return {*this, 0}; }
 };
 
 #endif // BODY_H

@@ -1,5 +1,6 @@
 #include "planetary_bodybuilder.h"
 #include <QString>
+#include <utility>
 #define CONF_COL   ("colour")
 #define CONF_RAD   ("radius")
 #define CONF_MASS  ("mass")
@@ -9,14 +10,7 @@
 #define CONF_Y_VEL ("vel_y")
 #define CONF_LABEL ("label")
 
-#define ERR_STR ("WARNING: No/invalid config value for key: ")
-#define ERR_DEF ("         Using default value: ")
 
-PlanetaryBodyBuilder::PlanetaryBodyBuilder()
-{
-  // Clone the Body prototype to use as our base
-  m_newBody = Body::getTypicalInstance()->clone();
-}
 
 void PlanetaryBodyBuilder::buildBody(ConfigSection *cs)
 {
@@ -35,7 +29,7 @@ void PlanetaryBodyBuilder::buildBody(ConfigSection *cs)
   }
   catch (...)
   {
-    configError(CONF_COL, m_newBody->getColour());
+    configError(m_configSection, CONF_COL, m_newBody->getColour());
   }
 
   // Mass
@@ -46,7 +40,7 @@ void PlanetaryBodyBuilder::buildBody(ConfigSection *cs)
   }
   catch (...)
   {
-    configError(CONF_MASS,
+    configError(m_configSection, CONF_MASS,
                  QString::number(m_newBody->getMass()).toStdString());
   }
 
@@ -58,7 +52,7 @@ void PlanetaryBodyBuilder::buildBody(ConfigSection *cs)
   }
   catch (...)
   {
-    configError(CONF_RAD,
+    configError(m_configSection, CONF_RAD,
                  QString::number(m_newBody->getRadius()).toStdString());
   }
 
@@ -70,7 +64,7 @@ void PlanetaryBodyBuilder::buildBody(ConfigSection *cs)
   }
   catch (...)
   {
-    configError(CONF_X_POS,
+    configError(m_configSection, CONF_X_POS,
                  QString::number(m_newBody->getXPosition()).toStdString());
   }
 
@@ -81,7 +75,7 @@ void PlanetaryBodyBuilder::buildBody(ConfigSection *cs)
   }
   catch (...)
   {
-    configError(CONF_Y_POS,
+    configError(m_configSection, CONF_Y_POS,
                  QString::number(m_newBody->getYPosition()).toStdString());
   }
 
@@ -93,7 +87,7 @@ void PlanetaryBodyBuilder::buildBody(ConfigSection *cs)
   }
   catch (...)
   {
-    configError(CONF_X_VEL,
+    configError(m_configSection, CONF_X_VEL,
                  QString::number(m_newBody->getXVelocity()).toStdString());
   }
 
@@ -104,7 +98,7 @@ void PlanetaryBodyBuilder::buildBody(ConfigSection *cs)
   }
   catch (...)
   {
-    configError(CONF_Y_VEL,
+    configError(m_configSection, CONF_Y_VEL,
                  QString::number(m_newBody->getYVelocity()).toStdString());
   }
 
@@ -116,18 +110,13 @@ void PlanetaryBodyBuilder::buildBody(ConfigSection *cs)
   }
   catch (...)
   {
-    configError(CONF_LABEL, m_newBody->getRenderName() ? "true" : "false");
+    configError(m_configSection, CONF_LABEL, m_newBody->getRenderName() ? "true" : "false");
   }
 }
 
-Body* PlanetaryBodyBuilder::getBody() const
+std::unique_ptr<Body> PlanetaryBodyBuilder::getBody()
 {
-  return m_newBody;
+  return std::move(m_newBody);
 }
 
-void PlanetaryBodyBuilder::configError(std::string keyName, std::string def)
-{
-  std::cerr << ERR_STR << keyName;
-  std::cerr << " in [" << m_configSection->getName() << "]" << std::endl;
-  std::cerr << ERR_DEF << def << std::endl;
-}
+

@@ -3,10 +3,10 @@
 #include "body.h"
 #include "debug.h"
 
-// This is auto-created by getTypicalInstance() when it is needed
-Body* Body::typicalInstance = nullptr;
+// This is auto-created by getNewInstance() when it is needed
+std::unique_ptr<Body> Body::typicalInstance = nullptr;
 
-Body* Body::clone()
+Body *Body::clone()
 {
   return new Body(m_mass,
                   m_radius,
@@ -16,15 +16,15 @@ Body* Body::clone()
                   m_yVelocity);
 }
 
-Body* Body::getTypicalInstance()
+std::unique_ptr<Body> Body::getNewInstance()
 {
   // Create our prototypical instance if it doesn't exist
   if (Body::typicalInstance == nullptr)
   {
-    Body::typicalInstance = new Body(1,1,0,0,0,0);
+    Body::typicalInstance = std::unique_ptr<Body>(new Body(1,1,0,0,0,0));
   }
   // Now just return it
-  return Body::typicalInstance;
+  return std::unique_ptr<Body>(Body::typicalInstance->clone());
 }
 
 double Body::getDistance(const Body &other) const
@@ -74,13 +74,4 @@ void Body::setRenderName(bool renderName)
 Body::~Body()
 {
   DEBUG("Body destructor");
-
-  // delete the singular typical instance if it exists
-  // other Body objects can re-create it if necessary
-  if (Body::typicalInstance != nullptr)
-  {
-    Body* ti = Body::typicalInstance;
-    Body::typicalInstance = nullptr;
-    delete ti;
-  }
 }

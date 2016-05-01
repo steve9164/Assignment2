@@ -7,7 +7,7 @@
  * If DEBUG_ENABLED is set, DEBUG() statements will be printed to stdout.
  */
 
-#define DEBUG_ENABLED (0)
+#define DEBUG_ENABLED (1)
 
 #if DEBUG_ENABLED
   #define DEBUG(s) std::cout << s << std::endl;
